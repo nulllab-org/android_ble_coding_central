@@ -1,4 +1,4 @@
-package com.nulllab.ble;
+package com.nulllab.ble.code.central;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.nulllab.ble.test.R;
-import com.nulllab.util.MainThreadUtils;
+import com.nulllab.ble.code.central.util.MainThreadUtils;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             if (bluetoothIsDisabled()) {
                 return;
             }
-            String address = ((EditText) findViewById(R.id.mac_address)).getText().toString();
+            final String address = ((EditText) findViewById(R.id.bluetooth_address)).getText().toString();
             mBlePeripheral.connect(address);
         });
 
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             if (bluetoothIsDisabled()) {
                 return;
             }
-            String address = ((EditText) findViewById(R.id.mac_address)).getText().toString();
+            final String address = ((EditText) findViewById(R.id.bluetooth_address)).getText().toString();
             final String code = codeEditText.getText().toString();
             mBlePeripheral.connect(address.trim().toUpperCase());
             mBlePeripheral.sendData(code.getBytes());

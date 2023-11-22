@@ -6,17 +6,17 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.nulllab.ble.MainActivity">
+    tools:context="com.nulllab.ble.code.central.MainActivity">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ble peripheral address: "
+        android:text="peripheral bluetooth address: "
         android:textColor="@color/black"
         android:textSize="24sp" />
 
     <EditText
-        android:id="@+id/mac_address"
+        android:id="@+id/bluetooth_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="48:E7:29:07:66:C2"
@@ -107,7 +107,7 @@
     <!--        android:scrollbars="vertical"-->
     <!--        android:layout_weight="2">-->
 
-    <com.nulllab.ble.LogView
+    <com.nulllab.ble.code.central.LogView
         android:id="@+id/log_text_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

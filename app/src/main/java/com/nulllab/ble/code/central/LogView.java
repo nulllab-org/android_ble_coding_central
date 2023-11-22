@@ -1,4 +1,4 @@
-package com.nulllab.ble;
+package com.nulllab.ble.code.central;
 
 import android.content.Context;
 import android.text.method.ScrollingMovementMethod;
@@ -7,7 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.nulllab.util.MainThreadUtils;
+import com.nulllab.ble.code.central.util.MainThreadUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

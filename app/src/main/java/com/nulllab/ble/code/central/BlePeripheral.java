@@ -1,4 +1,4 @@
-package com.nulllab.ble;
+package com.nulllab.ble.code.central;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;

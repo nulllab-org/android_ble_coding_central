@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ble_coding_center"
+rootProject.name = "ble_code_central"
 include(":app")
  
