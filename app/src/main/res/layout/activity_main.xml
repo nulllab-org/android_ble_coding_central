@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    android:background="@color/white"
     tools:context="com.nulllab.ble.code.central.MainActivity">
 
     <TextView
@@ -19,7 +19,7 @@
         android:id="@+id/bluetooth_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="48:E7:29:07:66:C2"
+        android:text="94:3c:c6:c1:01:26"
         android:textColor="#0000FF"
         android:textSize="24sp" />
 
@@ -60,8 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="connect"
-            android:textColor="@color/black"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/disconnect_button"
@@ -69,17 +69,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="disconnect"
-            android:textColor="@color/black"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/send_code_button"
+            android:id="@+id/send_file_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="send code"
-            android:textColor="@color/black"
-            android:textAllCaps="false" />
+            android:text="send main.py"
+            android:textAllCaps="false"
+            android:textColor="@color/black" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -90,7 +90,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="code: "
+        android:text="main.py: "
         android:textSize="25sp" />
 
     <androidx.appcompat.widget.AppCompatEditText
@@ -99,7 +99,8 @@
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:gravity="top"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="#0000FF"/>
 
     <!--    <ScrollView-->
     <!--        android:layout_width="match_parent"-->
@@ -118,5 +119,32 @@
         android:textColor="@color/black"
         android:textSize="20sp" />
     <!--    </ScrollView>-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/serial_data_to_send_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Please enter the serial data to be transmitted by ble"
+            android:layout_weight="4" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/send_serial_data_button"
+            android:text="send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:layout_weight="1" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

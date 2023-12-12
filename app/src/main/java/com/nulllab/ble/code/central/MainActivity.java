@@ -17,52 +17,35 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.nulllab.ble.test.R;
-import com.nulllab.ble.code.central.util.MainThreadUtils;
+
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private LogView mLogView;
     private TextView mStateTextView;
-    private final BlePeripheral mBlePeripheral = new BlePeripheral(this, new BlePeripheral.Listener() {
+    private final BleCodingPeripheral mBleCodingPeripheral = new BleCodingPeripheral(this, new BleCodingPeripheral.Listener() {
         @Override
-        public void onStateChange(int state) {
-            Log.i(TAG, "OnStateChange: " + state);
-            switch (state) {
-                case BlePeripheral.STATE_CONNECTING: {
-                    mLogView.print("connecting");
-                    MainThreadUtils.run(() -> mStateTextView.setText("connecting"));
-                    break;
-                }
-                case BlePeripheral.STATE_RECONNECTING: {
-                    mLogView.print("reconnecting");
-                    MainThreadUtils.run(() -> mStateTextView.setText("reconnecting"));
-                    break;
-                }
-                case BlePeripheral.STATE_CONNECTED: {
-                    mLogView.print("connected");
-                    MainThreadUtils.run(() -> mStateTextView.setText("connected"));
-                    break;
-                }
-                case BlePeripheral.STATE_DISCONNECTING: {
-                    mLogView.print("disconnecting");
-                    MainThreadUtils.run(() -> mStateTextView.setText("disconnecting"));
-                    break;
-                }
-                case BlePeripheral.STATE_DISCONNECTED: {
-                    mLogView.print("disconnected");
-                    MainThreadUtils.run(() -> mStateTextView.setText("disconnected"));
-                    break;
-                }
-            }
+        public void onStateChange(BleCodingPeripheral.State state) {
+            Log.d(TAG, "onStateChange: " + state);
+            mStateTextView.setText(state.toString().toLowerCase().replace('_', ' '));
         }
 
         @Override
-        public void onDataSendCompleted() {
-            Log.i(TAG, "onDataSendCompleted: ");
-            mLogView.print("code send completed");
-            MainThreadUtils.run(() ->
-                    Toast.makeText(MainActivity.this, "code send completed", Toast.LENGTH_SHORT).show()
-            );
+        public void onFileTransmitted() {
+            Log.d(TAG, "onCodeTransmitted: ");
+            Toast.makeText(MainActivity.this, "file transmitted", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onSerialDataReceived(byte[] data) {
+            mLogView.append(data);
+        }
+
+        @Override
+        public void onSerialDataTransmitted() {
+            Log.d(TAG, "onSerialDataTransmitted: ");
+            Toast.makeText(MainActivity.this, "serial data transmitted", Toast.LENGTH_SHORT).show();
         }
     });
 
@@ -76,42 +59,69 @@ public class MainActivity extends AppCompatActivity {
         mLogView = findViewById(R.id.log_text_view);
         mStateTextView = findViewById(R.id.state_text_view);
 
-        String default_code = "import machine\n" +
-                "import time\n" +
-                "pin = machine.Pin(12, machine.Pin.OUT)\n" +
-                "sleep_time = 1\n" +
+//        String default_code = "import machine\n" +
+//                "import time\n" +
+//                "pin = machine.Pin(12, machine.Pin.OUT)\n" +
+//                "sleep_time = 1\n" +
+//                "while True:\n" +
+//                "    pin.value(0)\n" +
+//                "    time.sleep(sleep_time)\n" +
+//                "    pin.value(1)\n" +
+//                "    time.sleep(sleep_time)\n";
+        String default_code = "import time\n\n" +
+                "count = 0\n" +
                 "while True:\n" +
-                "    pin.value(0)\n" +
-                "    time.sleep(sleep_time)\n" +
-                "    pin.value(1)\n" +
-                "    time.sleep(sleep_time)\n";
-
+                "    print('hello world', count)\n" +
+                "    count += 1\n" +
+                "    time.sleep_ms(1000)\n";
+//        String default_code = "import sys\n" +
+//                "\n" +
+//                "while True:\n" +
+//                "  print(\"read :\", sys.stdin.readline())";
         codeEditText.setText(default_code);
-        mLogView.print("app create");
 
         findViewById(R.id.connect_button).setOnClickListener(view -> {
             if (bluetoothIsDisabled()) {
                 return;
             }
             final String address = ((EditText) findViewById(R.id.bluetooth_address)).getText().toString();
-            mBlePeripheral.connect(address);
+            BleCodingPeripheral.ResultCode ret = mBleCodingPeripheral.connect(address);
+            if (BleCodingPeripheral.ResultCode.OK != ret) {
+                Log.e(TAG, "failed to connect " + address + ": " + ret);
+                Toast.makeText(this, "failed to connect " + address + ": " + ret, Toast.LENGTH_SHORT).show();
+            }
         });
 
         findViewById(R.id.disconnect_button).setOnClickListener(view -> {
             if (bluetoothIsDisabled()) {
                 return;
             }
-            mBlePeripheral.disconnect();
+            BleCodingPeripheral.ResultCode ret = mBleCodingPeripheral.disconnect();
+            if (BleCodingPeripheral.ResultCode.OK != ret) {
+                Log.e(TAG, "failed to disconnect, " + ret);
+                Toast.makeText(this, "failed to disconnect: " + ret, Toast.LENGTH_SHORT).show();
+            }
         });
 
-        findViewById(R.id.send_code_button).setOnClickListener(view -> {
+        findViewById(R.id.send_file_button).setOnClickListener(view -> {
             if (bluetoothIsDisabled()) {
                 return;
             }
             final String address = ((EditText) findViewById(R.id.bluetooth_address)).getText().toString();
             final String code = codeEditText.getText().toString();
-            mBlePeripheral.connect(address.trim().toUpperCase());
-            mBlePeripheral.sendData(code.getBytes());
+            BleCodingPeripheral.ResultCode ret = mBleCodingPeripheral.sendFile(code.getBytes(StandardCharsets.UTF_8));
+            if (BleCodingPeripheral.ResultCode.OK != ret) {
+                Log.e(TAG, "failed to send file, " + ret);
+                Toast.makeText(this, "failed to send file: " + ret, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        findViewById(R.id.send_serial_data_button).setOnClickListener(view -> {
+            final String serial_data = ((EditText) findViewById(R.id.serial_data_to_send_text_view)).getText().toString();
+            BleCodingPeripheral.ResultCode ret = mBleCodingPeripheral.sendSerialData(serial_data.getBytes(StandardCharsets.UTF_8));
+            if (ret != BleCodingPeripheral.ResultCode.OK) {
+                Toast.makeText(this, "failed to serial data: " + ret, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -119,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.i(TAG, "onStart: ");
-        mLogView.print("app start");
-//        requestPermissions();
     }
 
     @Override

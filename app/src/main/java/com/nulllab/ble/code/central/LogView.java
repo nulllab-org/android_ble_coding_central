@@ -12,35 +12,81 @@ import com.nulllab.ble.code.central.util.MainThreadUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Semaphore;
 
 public class LogView extends androidx.appcompat.widget.AppCompatTextView {
     private static final String TAG = "LogView";
 
     private final SimpleDateFormat sSimpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
-    private final StringBuffer mStringBuffer = new StringBuffer();
+    private final StringBuilder mStringBuilder = new StringBuilder();
+    private final Semaphore mSemaphore = new Semaphore(0);
+    private boolean mUpdate = false;
 
     public LogView(Context context) {
         super(context);
         setMovementMethod(ScrollingMovementMethod.getInstance());
+        init();
     }
 
     public LogView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         setMovementMethod(ScrollingMovementMethod.getInstance());
+        init();
     }
 
     public LogView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setMovementMethod(ScrollingMovementMethod.getInstance());
+        init();
+    }
+
+    private void init() {
+        new Thread(() -> {
+            while (true) {
+                update();
+            }
+        }).start();
+    }
+
+    private void update() {
+        String text = null;
+        synchronized (this) {
+            while (!mUpdate) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            text = mStringBuilder.toString();
+            mUpdate = false;
+        }
+
+        final String final_text = text;
+
+        MainThreadUtils.run(() -> {
+            setText(final_text);
+            int offset = getLineCount() * getLineHeight();
+            if (offset > getHeight()) {
+                scrollTo(0, offset - getHeight());
+            }
+            mSemaphore.release();
+        });
+
+        try {
+            mSemaphore.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void print(String text) {
-        mStringBuffer.append(sSimpleDateFormat.format(new Date()));
-        mStringBuffer.append(' ');
-        mStringBuffer.append(text);
-        mStringBuffer.append('\n');
+        mStringBuilder.append(sSimpleDateFormat.format(new Date()));
+        mStringBuilder.append(' ');
+        mStringBuilder.append(text);
+        mStringBuilder.append('\n');
         MainThreadUtils.run(() -> {
-            setText(mStringBuffer);
+            setText(mStringBuilder);
             int offset = getLineCount() * getLineHeight();
             if (offset > getHeight()) {
                 scrollTo(0, offset - getHeight());
@@ -48,5 +94,14 @@ public class LogView extends androidx.appcompat.widget.AppCompatTextView {
 //            scrollTo(0, );
             Log.d(TAG, "print: height:" + getHeight() + ", x:" + getX() + ", y: " + getY() + ", offset: " + offset);
         });
+    }
+
+    public synchronized void append(byte[] data) {
+        mStringBuilder.append(new String(data));
+        if (mStringBuilder.length() > 500) {
+            mStringBuilder.delete(0, mStringBuilder.length() - 500);
+        }
+        mUpdate = true;
+        notify();
     }
 }
