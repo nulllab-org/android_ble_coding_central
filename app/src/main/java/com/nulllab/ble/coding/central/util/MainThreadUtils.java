@@ -1,4 +1,4 @@
-package com.nulllab.ble.code.central.util;
+package com.nulllab.ble.coding.central.util;
 
 import android.os.Handler;
 import android.os.Looper;

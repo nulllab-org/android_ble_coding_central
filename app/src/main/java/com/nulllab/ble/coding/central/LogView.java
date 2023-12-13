@@ -1,4 +1,4 @@
-package com.nulllab.ble.code.central;
+package com.nulllab.ble.coding.central;
 
 import android.content.Context;
 import android.text.method.ScrollingMovementMethod;
@@ -7,7 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.nulllab.ble.code.central.util.MainThreadUtils;
+import com.nulllab.ble.coding.central.util.MainThreadUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -78,22 +78,6 @@ public class LogView extends androidx.appcompat.widget.AppCompatTextView {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void print(String text) {
-        mStringBuilder.append(sSimpleDateFormat.format(new Date()));
-        mStringBuilder.append(' ');
-        mStringBuilder.append(text);
-        mStringBuilder.append('\n');
-        MainThreadUtils.run(() -> {
-            setText(mStringBuilder);
-            int offset = getLineCount() * getLineHeight();
-            if (offset > getHeight()) {
-                scrollTo(0, offset - getHeight());
-            }
-//            scrollTo(0, );
-            Log.d(TAG, "print: height:" + getHeight() + ", x:" + getX() + ", y: " + getY() + ", offset: " + offset);
-        });
     }
 
     public synchronized void append(byte[] data) {

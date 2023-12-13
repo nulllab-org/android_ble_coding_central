@@ -1,4 +1,4 @@
-package com.nulllab.ble.code.central;
+package com.nulllab.ble.coding.central;
 
 import java.io.ByteArrayOutputStream;
 

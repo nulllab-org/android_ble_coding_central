@@ -1,4 +1,4 @@
-package com.nulllab.ble.code.central;
+package com.nulllab.ble.coding.central;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
@@ -15,7 +15,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 
-import com.nulllab.ble.code.central.util.MainThreadUtils;
+import com.nulllab.ble.coding.central.util.MainThreadUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,7 +25,6 @@ public class BleCodingPeripheral {
     private static final String TAG = "BlePeripheral";
     private static final int MTU_MAX = 517;
     private static final int MTU_MIN = 23;
-
     private static final UUID SERVICE_UUID = UUID.fromString("00000001-8c26-476f-89a7-a108033a69c7");
     private static final UUID FILE_UUID = UUID.fromString("00000002-8c26-476f-89a7-a108033a69c7");
     private static final UUID SERIAL_UUID = UUID.fromString("00000003-8c26-476f-89a7-a108033a69c7");

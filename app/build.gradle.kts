@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.nulllab.ble.test"
+    namespace = "com.nulllab.ble.coding.central"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.nulllab.ble.test"
+        applicationId = "com.nulllab.ble.coding.central"
         minSdk = 23
         targetSdk = 34
         versionCode = 1
