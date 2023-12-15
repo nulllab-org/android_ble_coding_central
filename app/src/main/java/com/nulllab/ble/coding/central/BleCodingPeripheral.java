@@ -22,16 +22,16 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class BleCodingPeripheral {
-    private static final String TAG = "BlePeripheral";
+    private static final String TAG = "BleCodingPeripheral";
     private static final int MTU_MAX = 517;
     private static final int MTU_MIN = 23;
     private static final UUID SERVICE_UUID = UUID.fromString("00000001-8c26-476f-89a7-a108033a69c7");
     private static final UUID FILE_UUID = UUID.fromString("00000002-8c26-476f-89a7-a108033a69c7");
-    private static final UUID SERIAL_UUID = UUID.fromString("00000003-8c26-476f-89a7-a108033a69c7");
+    private static final UUID STDIO_UUID = UUID.fromString("00000003-8c26-476f-89a7-a108033a69c7");
     private final Context mContext;
     private final BleFile mBleFile = new BleFile();
     private final Listener mListener;
-    private ByteArrayInputStream mSerialData = null;
+    private ByteArrayInputStream mStdinStream = null;
     private BluetoothGatt mBluetoothGatt;
     private int mMtu = MTU_MIN;
     private State mState = State.DISCONNECTED;
@@ -63,7 +63,7 @@ public class BleCodingPeripheral {
             Log.d(TAG, "onServicesDiscovered: ");
             synchronized (BleCodingPeripheral.this) {
                 if (mState == State.DISCOVERING_SERVICES) {
-                    final BluetoothGattCharacteristic characteristic = mBluetoothGatt.getService(SERVICE_UUID).getCharacteristic(SERIAL_UUID);
+                    final BluetoothGattCharacteristic characteristic = mBluetoothGatt.getService(SERVICE_UUID).getCharacteristic(STDIO_UUID);
                     mBluetoothGatt.setCharacteristicNotification(characteristic, true);
                     for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors()) {
                         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
@@ -79,7 +79,7 @@ public class BleCodingPeripheral {
         @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
-            Log.d(TAG, "onCharacteristicWrite: ");
+            Log.d(TAG, "onCharacteristicWrite: " + status);
             synchronized (BleCodingPeripheral.this) {
                 if (State.SENDING_FILE == mState) {
                     byte[] packet = mBleFile.readBlePacket(mMtu - 3);
@@ -93,25 +93,25 @@ public class BleCodingPeripheral {
                             }
                         });
                     }
-                } else if (State.SENDING_SERIAL_DATA == mState) {
-                    if (mSerialData.available() == 0) {
+                } else if (State.SENDING_TO_STDIN == mState) {
+                    if (mStdinStream.available() == 0) {
                         changeState(State.CONNECTED);
                         MainThreadUtils.run(() -> {
                             if (mListener != null) {
-                                mListener.onSerialDataTransmitted();
+                                mListener.onTransmittedToStdin();
                             }
                         });
                         return;
                     }
 
-                    byte[] packet = new byte[Integer.min(mSerialData.available(), mMtu - 3)];
+                    byte[] packet = new byte[Integer.min(mStdinStream.available(), mMtu - 3)];
                     try {
-                        mSerialData.read(packet);
+                        mStdinStream.read(packet);
                     } catch (IOException e) {
                         Log.e(TAG, "onCharacteristicWrite: ", e);
                         throw new RuntimeException(e);
                     }
-                    sendPacket(SERIAL_UUID, packet);
+                    sendPacket(STDIO_UUID, packet);
                 }
             }
         }
@@ -123,7 +123,7 @@ public class BleCodingPeripheral {
                 return;
             }
             if (mListener != null) {
-                mListener.onSerialDataReceived(characteristic.getValue());
+                mListener.onReceivedFromStdout(characteristic.getValue());
             }
         }
 
@@ -131,7 +131,7 @@ public class BleCodingPeripheral {
         public void onCharacteristicChanged(@NonNull BluetoothGatt gatt, @NonNull BluetoothGattCharacteristic characteristic, @NonNull byte[] value) {
             super.onCharacteristicChanged(gatt, characteristic, value);
             if (mListener != null) {
-                mListener.onSerialDataReceived(value);
+                mListener.onReceivedFromStdout(value);
             }
         }
 
@@ -139,8 +139,10 @@ public class BleCodingPeripheral {
         public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
             super.onDescriptorWrite(gatt, descriptor, status);
             Log.d(TAG, "onDescriptorWrite: ");
-            if (mState == State.WRITING_DESCRIPTOR) {
-                changeState(State.CONNECTED);
+            synchronized (BleCodingPeripheral.this) {
+                if (mState == State.WRITING_DESCRIPTOR) {
+                    changeState(State.CONNECTED);
+                }
             }
         }
 
@@ -165,6 +167,7 @@ public class BleCodingPeripheral {
             Log.d(TAG, "onServiceChanged: ");
         }
     };
+
     public BleCodingPeripheral(Context context, Listener listener) {
         mContext = context;
         mListener = listener;
@@ -229,23 +232,24 @@ public class BleCodingPeripheral {
 
     @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-    public synchronized ResultCode sendSerialData(byte[] bytes) {
-        Log.i(TAG, "sendSerialData: ");
+    public synchronized ResultCode sendToStdin(byte[] bytes) {
+        Log.i(TAG, "sendToStdin: ");
         if (mState != State.CONNECTED) {
-            Log.e(TAG, "sendCode: invalid state: " + mState);
+            Log.e(TAG, "sendToStdin: invalid state: " + mState);
             return ResultCode.INVALID_STATE;
         }
 
-        mSerialData = new ByteArrayInputStream(bytes);
-        byte[] packet = new byte[Integer.min(mSerialData.available(), mMtu - 3)];
+        mStdinStream = new ByteArrayInputStream(bytes);
+        byte[] packet = new byte[Integer.min(mStdinStream.available(), mMtu - 3)];
         try {
-            mSerialData.read(packet);
+            mStdinStream.read(packet);
         } catch (IOException e) {
             return ResultCode.INVALID_ARGUMENTS;
         }
+
         if (packet.length > 0) {
-            changeState(State.SENDING_SERIAL_DATA);
-            sendPacket(SERIAL_UUID, packet);
+            changeState(State.SENDING_TO_STDIN);
+            sendPacket(STDIO_UUID, packet);
             return ResultCode.OK;
         } else {
             return ResultCode.INVALID_ARGUMENTS;
@@ -272,47 +276,37 @@ public class BleCodingPeripheral {
             mBluetoothGatt.close();
         }
         mBluetoothGatt = null;
-        mSerialData = null;
+        mStdinStream = null;
         mMtu = MTU_MIN;
         mBleFile.setData(null);
         mState = State.DISCONNECTED;
     }
 
     private synchronized void changeState(State state) {
+        State previous_state = mState;
         mState = state;
         MainThreadUtils.run(() -> {
             if (mListener != null) {
-                mListener.onStateChange(state);
+                mListener.onStateChange(previous_state, state);
             }
         });
     }
 
     public enum State {
-        DISCONNECTED,
-        CONNECTING,
-        CONFIGURING_MTU,
-        DISCOVERING_SERVICES,
-        WRITING_DESCRIPTOR,
-        CONNECTED,
-        SENDING_FILE,
-        SENDING_SERIAL_DATA,
+        DISCONNECTED, CONNECTING, CONFIGURING_MTU, DISCOVERING_SERVICES, WRITING_DESCRIPTOR, CONNECTED, SENDING_FILE, SENDING_TO_STDIN,
     }
 
     public enum ResultCode {
-        OK,
-        INVALID_STATE,
-        INVALID_ARGUMENTS,
-        BLUETOOTH_UNSUPPORTED,
-        BLUETOOTH_DISABLED,
+        OK, INVALID_STATE, INVALID_ARGUMENTS, BLUETOOTH_UNSUPPORTED, BLUETOOTH_DISABLED,
     }
 
     public interface Listener {
-        void onStateChange(State state);
+        void onStateChange(State previous_state, State new_state);
 
         void onFileTransmitted();
 
-        void onSerialDataReceived(byte[] data);
+        void onReceivedFromStdout(byte[] data);
 
-        void onSerialDataTransmitted();
+        void onTransmittedToStdin();
     }
 }

@@ -75,13 +75,15 @@ public class MainActivity extends AppCompatActivity {
     private TextView mStateTextView;
     private final BleCodingPeripheral mBleCodingPeripheral = new BleCodingPeripheral(this, new BleCodingPeripheral.Listener() {
         @Override
-        public void onStateChange(BleCodingPeripheral.State state) {
+        public void onStateChange(BleCodingPeripheral.State previous_state, BleCodingPeripheral.State state) {
             Log.d(TAG, "onStateChange: " + state);
             mStateTextView.setText(state.toString().toLowerCase().replace('_', ' '));
 
             switch (state) {
                 case CONNECTED:
-                    Toast.makeText(MainActivity.this, "device is connected", Toast.LENGTH_SHORT).show();
+                    if (previous_state == BleCodingPeripheral.State.DISCONNECTED) {
+                        Toast.makeText(MainActivity.this, "device is connected", Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case DISCONNECTED:
                     Toast.makeText(MainActivity.this, "device is disconnected", Toast.LENGTH_SHORT).show();
@@ -97,14 +99,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onSerialDataReceived(byte[] data) {
+        public void onReceivedFromStdout(byte[] data) {
             mLogView.append(data);
         }
 
         @Override
-        public void onSerialDataTransmitted() {
-            Log.d(TAG, "onSerialDataTransmitted: ");
-            Toast.makeText(MainActivity.this, "serial data transmitted", Toast.LENGTH_SHORT).show();
+        public void onTransmittedToStdin() {
+            Log.d(TAG, "onTransmittedToStdin: ");
+            Toast.makeText(MainActivity.this, "data transmitted to stdin", Toast.LENGTH_SHORT).show();
         }
     });
 
@@ -172,11 +174,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.send_serial_data_button).setOnClickListener(view -> {
-            final String serial_data = ((EditText) findViewById(R.id.serial_data_to_send_text_view)).getText().toString();
-            BleCodingPeripheral.ResultCode ret = mBleCodingPeripheral.sendSerialData(serial_data.getBytes(StandardCharsets.UTF_8));
+        findViewById(R.id.send_to_stdin).setOnClickListener(view -> {
+            final String data = ((EditText) findViewById(R.id.stdin_data_text_view)).getText().toString();
+            BleCodingPeripheral.ResultCode ret = mBleCodingPeripheral.sendToStdin(data.getBytes(StandardCharsets.UTF_8));
             if (ret != BleCodingPeripheral.ResultCode.OK) {
-                Toast.makeText(this, "failed to serial data: " + ret, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "failed to send data to stdin: " + ret, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -228,6 +230,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause");
+        mConnectSwitch.setChecked(false);
+        View rootView = getWindow().getDecorView().getRootView();
+        rootView.clearFocus();
     }
 
     @Override
@@ -311,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
 
         ScanSettings scanSettings = new ScanSettings.Builder().setMatchMode(ScanSettings.CALLBACK_TYPE_ALL_MATCHES).build();
 
-        ScanFilter scanFilter = new ScanFilter.Builder().setDeviceName("mpy-repl").build();
+        ScanFilter scanFilter = new ScanFilter.Builder().setDeviceName("ble_coding_peripheral").build();
         mBleAddressSet.clear();
         mBleAddressList.clear();
         mDialogAdapter.notifyDataSetChanged();

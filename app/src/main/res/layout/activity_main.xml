@@ -100,12 +100,6 @@
         android:textColor="#0000FF"
         android:textSize="20sp" />
 
-    <!--    <ScrollView-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:scrollbars="vertical"-->
-    <!--        android:layout_weight="2">-->
-
     <com.nulllab.ble.coding.central.LogView
         android:id="@+id/log_text_view"
         android:layout_width="match_parent"
@@ -128,14 +122,14 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/serial_data_to_send_text_view"
+            android:id="@+id/stdin_data_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:hint="Please enter the serial data to be transmitted by ble" />
+            android:hint="Please enter the data to send to stdin" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/send_serial_data_button"
+            android:id="@+id/send_to_stdin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -3,14 +3,12 @@ package com.nulllab.ble.coding.central;
 import android.content.Context;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.nulllab.ble.coding.central.util.MainThreadUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
 
