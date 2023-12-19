@@ -13,19 +13,20 @@
         android:layout_height="50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/ble_address_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:layout_weight="1" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/scan_button"
-            android:text="scan device"
-            android:textAllCaps="false"
             android:layout_width="150dp"
-            android:layout_height="wrap_content">
-        </androidx.appcompat.widget.AppCompatButton>
+            android:layout_height="wrap_content"
+            android:text="scan device"
+            android:textAllCaps="false"></androidx.appcompat.widget.AppCompatButton>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -36,32 +37,34 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="20dp"
             android:layout_height="wrap_content"
-            android:text="state: "
-            android:layout_weight="2"
-            android:textColor="@color/black"
             android:layout_centerVertical="true"
-            android:textSize="20sp"/>
+            android:layout_weight="2"
+            android:text="state: "
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
         <TextView
             android:id="@+id/state_text_view"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:text="disconnected"
+            android:layout_centerVertical="true"
             android:layout_weight="2"
+            android:text="disconnected"
             android:textColor="#0000FF"
-            android:textSize="20sp"
-            android:layout_centerVertical="true"/>
+            android:textSize="20sp" />
+
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/connect_switch"
-            android:text="connect"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true">
-        </androidx.appcompat.widget.SwitchCompat>
+            android:layout_centerVertical="true"
+            android:text="connect"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -72,23 +75,49 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="demo code: "
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/demo_code"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_centerVertical="true" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:text="main.py:"
             android:textAllCaps="false"
             android:textColor="#008080"
-            android:textSize="20sp"
-            android:text="main.py:" />
+            android:textSize="20sp" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/send_file_button"
-            android:text="send main.py"
-            android:textAllCaps="false"
             android:layout_width="150dp"
-            android:layout_height="wrap_content">
-        </androidx.appcompat.widget.AppCompatButton>
+            android:layout_height="wrap_content"
+            android:text="send main.py"
+            android:textAllCaps="false"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatEditText
@@ -109,7 +138,7 @@
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
     <!--    </ScrollView>-->
     <View
         android:layout_width="match_parent"

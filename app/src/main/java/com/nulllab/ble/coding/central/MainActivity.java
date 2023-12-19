@@ -28,6 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -212,6 +214,41 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show();
             startScan();
         });
+
+        Spinner demoCodeSpinner = findViewById(R.id.demo_code);
+        List<String> demoList = new ArrayList<>(DemoCode.Codes.keySet());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, demoList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        demoCodeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                codeEditText.setText(DemoCode.Codes.values().toArray(new String[0])[position]);
+                InputStream inputStream = null;
+                try {
+                    inputStream = getAssets().open(DemoCode.Codes.values().toArray(new String[0])[position]);
+                    byte[] text = new byte[inputStream.available()];
+                    inputStream.read(text);
+                    codeEditText.setText(new String(text));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        demoCodeSpinner.setAdapter(adapter);
+        demoCodeSpinner.setSelection(0);
     }
 
     @Override
