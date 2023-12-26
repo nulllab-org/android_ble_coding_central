@@ -2,9 +2,8 @@ name: Android CI
 
 on:
   push:
-    branches: [ "ci_test" ]
-  pull_request:
-    branches: [ "ci_test" ]
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
@@ -33,3 +32,13 @@ jobs:
         path: |
           app/build/outputs/apk/debug/*.apk
           app/build/outputs/apk/release/*.apk
+    - name: Create Release
+      uses: actions/create-release@1.1.4
+      id: create_release
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
