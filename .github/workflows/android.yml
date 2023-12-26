@@ -24,7 +24,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew assembleDebug --info
+      run: ./gradlew build --info
 
     # - name: Upload APK
     #   id: upload_apk
@@ -52,18 +52,36 @@ jobs:
     - name: Find APKs
       id: find_apks
       run: |
-        apk_path=$(ls app/build/outputs/apk/debug/*.apk)
-        apk_name=$(basename ${apk_path})
-        echo "apk_path=${apk_path}" >> $GITHUB_OUTPUT
-        echo "apk_name=${apk_name}" >> $GITHUB_OUTPUT
+        debug_apk_path=$(ls app/build/outputs/apk/debug/*.apk)
+        debug_apk_name=$(basename ${debug_apk_path})
+        echo "debug_apk_path: ${debug_apk_path}"
+        echo "debug_apk_name: ${debug_apk_name}"
+        echo "debug_apk_path=${debug_apk_path}" >> $GITHUB_OUTPUT
+        echo "debug_apk_name=${debug_apk_name}" >> $GITHUB_OUTPUT
+
+        release_apk_path=$(ls app/build/outputs/apk/release/*.apk)
+        release_apk_name=$(basename ${release_apk_path})
+        echo "release_apk_path: ${release_apk_path}"
+        echo "release_apk_name: ${release_apk_name}"
+        echo "release_apk_path=${release_apk_path}" >> $GITHUB_OUTPUT
+        echo "release_apk_name=${release_apk_name}" >> $GITHUB_OUTPUT
 
     - name: Upload Debug APK
-      id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{ steps.find_apks.outputs.apk_path }}
-        asset_name: ${{ steps.find_apks.outputs.apk_name }}
+        asset_path: ${{ steps.find_apks.outputs.debug_apk_path }}
+        asset_name: ${{ steps.find_apks.outputs.debug_apk_name }}
+        asset_content_type: application/zip
+
+    - name: Upload Release APK
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ steps.find_apks.outputs.release_apk_path }}
+        asset_name: ${{ steps.find_apks.outputs.release_apk_name }}
         asset_content_type: application/zip
