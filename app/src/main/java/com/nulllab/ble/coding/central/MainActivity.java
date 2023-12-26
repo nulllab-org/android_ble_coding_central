@@ -8,6 +8,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -208,8 +209,13 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             mBleCodingPeripheral.disconnect();
+            mBleAddressSpinnerAdapter.clear();
+            mBleAddressSpinnerAdapter.notifyDataSetChanged();
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setSingleChoiceItems(mDialogAdapter, 0, (dialog, which) -> ((Spinner) findViewById(R.id.ble_address_spinner)).setSelection(which)).setOnCancelListener(dialog -> BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner().stopScan(mScanCallback)).setTitle("scanning...");
+            builder.setSingleChoiceItems(mDialogAdapter, 0, (dialog, which) -> ((Spinner) findViewById(R.id.ble_address_spinner)).setSelection(which))
+                    .setOnCancelListener(dialog -> BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner().stopScan(mScanCallback))
+                    .setTitle("scanning...")
+                    .setPositiveButton("OK", (dialog, which) -> BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner().stopScan(mScanCallback));
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
             startScan();

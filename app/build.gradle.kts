@@ -10,8 +10,8 @@ android {
         applicationId = "com.nulllab.ble.coding.central"
         minSdk = 23
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,8 +23,25 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    applicationVariants.all {
+        outputs.all {
+            when (this) {
+                is com.android.build.gradle.internal.api.ApkVariantOutputImpl -> {
+                    if (name.endsWith("debug")) {
+                        outputFileName = "ble_coding_central-debug-v" + defaultConfig.versionName + ".apk"
+                    }
+                    if (name.endsWith("release")) {
+                        outputFileName = "ble_coding_central-release-v" + defaultConfig.versionName + ".apk"
+                    }
+                }
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
