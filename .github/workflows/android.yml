@@ -54,7 +54,7 @@ jobs:
       run: |
         chmod -R 755 app/build/outputs/apk/debug/
         apk_path=$(ls app/build/outputs/apk/debug/*.apk)
-        apk_name=basename ${apk_path}
+        apk_name=$(basename ${apk_path})
         echo "apk_path=${apk_path}" >> $GITHUB_OUTPUT
         echo "apk_name=${apk_name}" >> $GITHUB_OUTPUT
 
