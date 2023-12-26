@@ -260,7 +260,7 @@ public class BleCodingPeripheral {
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     private void sendPacket(UUID uuid, byte[] packet) {
         BluetoothGattCharacteristic characteristic = mBluetoothGatt.getService(SERVICE_UUID).getCharacteristic(uuid);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mBluetoothGatt.writeCharacteristic(characteristic, packet, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
         } else {
             characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
