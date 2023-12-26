@@ -52,7 +52,7 @@ jobs:
     - name: Find Debug APK
       id: find_debug_apk
       run: |
-        apk_path=$(ls app/build/outputs/apk/debug/*.apk)
+        apk_path=$(find app/build/outputs/apk/debug/ -name "*.apk")
         apk_name=basename ${apk_path}
         echo "apk_path=${apk_path}" >> $GITHUB_OUTPUT
         echo "apk_name=${apk_name}" >> $GITHUB_OUTPUT
