@@ -24,19 +24,19 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build --info
+      run: ./gradlew assembleDebug --info
 
-    - name: Upload APK
-      id: upload_apk
-      uses: actions/upload-artifact@v4.0.0
-      with: 
-        name: apk.zip
-        path: |
-          app/build/outputs/apk/debug/*.apk
-          app/build/outputs/apk/release/*.apk
+    # - name: Upload APK
+    #   id: upload_apk
+    #   uses: actions/upload-artifact@v4.0.0
+    #   with: 
+    #     name: apk.zip
+    #     path: |
+    #       app/build/outputs/apk/debug/*.apk
+    #       app/build/outputs/apk/release/*.apk
     
-    - name: Output artifact ID
-      run:  echo 'Artifact ID is ${{ steps.upload_apk.outputs }}'
+    # - name: Output artifact ID
+    #   run:  echo 'Artifact ID is ${{ steps.upload_apk.outputs }}'
     
     - name: Create Release
       id: create_release
@@ -49,6 +49,12 @@ jobs:
           draft: false
           prerelease: false
 
+    - name: Find APKs 
+      id: find_apks
+      run: |
+        apk_paths=$(find ./app/build/outputs/apk/ -name "*.apk")
+        echo "::set-output name=apk_paths::${apk_paths}"
+
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
@@ -56,6 +62,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: $(find ./app/build/outputs/apk/ -name "*.apk")
+        asset_path: ${{ steps.find.outputs.apk_paths }}
         asset_name: my-artifact.zip
         asset_content_type: application/zip
