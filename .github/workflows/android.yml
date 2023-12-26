@@ -49,19 +49,21 @@ jobs:
           draft: false
           prerelease: false
 
-    - name: Find APKs 
-      id: find_apks
+    - name: Find Debug APK
+      id: find_debug_apk
       run: |
-        apk_paths=$(find ./app/build/outputs/apk/ -name "*.apk")
-        echo "::set-output name=apk_paths::${apk_paths}"
+        apk_path=$(ls app/build/outputs/apk/debug/*.apk)
+        apk_name=basename ${apk_path}
+        echo "apk_path=${apk_path}" >> $GITHUB_OUTPUT
+        echo "apk_name=${apk_name}" >> $GITHUB_OUTPUT
 
-    - name: Upload Release Asset
+    - name: Upload Debug APK
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{ steps.find_apks.outputs.apk_paths }}
-        # asset_name: my-artifact.zip
+        asset_path: ${{ steps.find_debug_apk.outputs.apk_path }}
+        asset_name: ${{ steps.find_debug_apk.outputs.apk_name }}
         asset_content_type: application/zip
