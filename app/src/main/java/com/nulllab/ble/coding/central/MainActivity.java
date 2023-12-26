@@ -8,7 +8,6 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     });
 
     @Override
-    @SuppressLint("InlinedApi")
+    @SuppressLint({"InlinedApi", "MissingPermission"})
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,22 +126,6 @@ public class MainActivity extends AppCompatActivity {
         mLogView = findViewById(R.id.log_text_view);
         mStateTextView = findViewById(R.id.state_text_view);
         mBleAddressSpinner = findViewById(R.id.ble_address_spinner);
-
-//        String default_code = "import machine\n" +
-//                "import time\n" +
-//                "pin = machine.Pin(12, machine.Pin.OUT)\n" +
-//                "sleep_time = 1\n" +
-//                "while True:\n" +
-//                "    pin.value(0)\n" +
-//                "    time.sleep(sleep_time)\n" +
-//                "    pin.value(1)\n" +
-//                "    time.sleep(sleep_time)\n";
-        String default_code = "import time\n\n" + "count = 0\n" + "while True:\n" + "    print('hello world', count)\n" + "    count += 1\n" + "    time.sleep_ms(1000)\n";
-//        String default_code = "import sys\n" +
-//                "\n" +
-//                "while True:\n" +
-//                "  print(\"read :\", sys.stdin.readline())";
-        codeEditText.setText(default_code);
 
         mConnectSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Log.d(TAG, "onCheckedChanged: " + isChecked);
