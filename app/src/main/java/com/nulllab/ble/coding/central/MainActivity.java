@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     });
 
     @Override
-    @SuppressLint({"InlinedApi", "MissingPermission"})
+    @SuppressLint("MissingPermission")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -325,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_SCAN)
     private void startScan() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

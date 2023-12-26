@@ -1,6 +1,5 @@
 package com.nulllab.ble.coding.central;
 
-import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -37,7 +36,6 @@ public class BleCodingPeripheral {
     private State mState = State.DISCONNECTED;
     private final BluetoothGattCallback mBluetoothGattCallback = new BluetoothGattCallback() {
         @Override
-        @SuppressLint("InlinedApi")
         @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
@@ -56,7 +54,6 @@ public class BleCodingPeripheral {
         }
 
         @Override
-        @SuppressLint("InlinedApi")
         @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
@@ -75,7 +72,6 @@ public class BleCodingPeripheral {
         }
 
         @Override
-        @SuppressLint("InlinedApi")
         @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
@@ -147,7 +143,6 @@ public class BleCodingPeripheral {
         }
 
         @Override
-        @SuppressLint("InlinedApi")
         @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         public void onMtuChanged(BluetoothGatt gatt, int mtu, int status) {
             super.onMtuChanged(gatt, mtu, status);
@@ -173,7 +168,6 @@ public class BleCodingPeripheral {
         mListener = listener;
     }
 
-    @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     public synchronized ResultCode connect(final String bleAddress) {
         if (mState != State.DISCONNECTED) {
@@ -200,7 +194,6 @@ public class BleCodingPeripheral {
         return ResultCode.OK;
     }
 
-    @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     public synchronized ResultCode disconnect() {
         if (mState == State.DISCONNECTED) {
@@ -212,7 +205,6 @@ public class BleCodingPeripheral {
         return ResultCode.OK;
     }
 
-    @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     public synchronized ResultCode sendFile(byte[] bytes) {
         Log.i(TAG, "sendCode: ");
@@ -230,7 +222,6 @@ public class BleCodingPeripheral {
         return ResultCode.OK;
     }
 
-    @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     public synchronized ResultCode sendToStdin(byte[] bytes) {
         Log.i(TAG, "sendToStdin: ");
@@ -256,7 +247,6 @@ public class BleCodingPeripheral {
         }
     }
 
-    @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     private void sendPacket(UUID uuid, byte[] packet) {
         BluetoothGattCharacteristic characteristic = mBluetoothGatt.getService(SERVICE_UUID).getCharacteristic(uuid);
@@ -269,7 +259,6 @@ public class BleCodingPeripheral {
         }
     }
 
-    @SuppressLint("InlinedApi")
     @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
     private synchronized void reset() {
         if (mBluetoothGatt != null) {
