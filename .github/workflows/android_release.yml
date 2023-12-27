@@ -1,4 +1,4 @@
-name: android_release
+name: Android Release
 
 on:
   push:
@@ -25,18 +25,6 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build --info
-
-    # - name: Upload APK
-    #   id: upload_apk
-    #   uses: actions/upload-artifact@v4.0.0
-    #   with: 
-    #     name: apk.zip
-    #     path: |
-    #       app/build/outputs/apk/debug/*.apk
-    #       app/build/outputs/apk/release/*.apk
-    
-    # - name: Output artifact ID
-    #   run:  echo 'Artifact ID is ${{ steps.upload_apk.outputs }}'
 
     - name: Create Release
       id: create_release
