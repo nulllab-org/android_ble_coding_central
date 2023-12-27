@@ -1,5 +1,7 @@
 # Android BLE Coding Central
 
+[![Android CI](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_ci.yml/badge.svg)](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_ci.yml)
+
 ## Overview
 
 This is an Android Demo APK project that includes the functionality of transmitting Micropython Python code to ESP32 slave devices via Bluetooth for wireless programming. The application also monitors the serial communication of the ESP32, enabling remote wireless serial data transmission. This application requires the use of specific ESP32 boards and firmware in order to function properly.
