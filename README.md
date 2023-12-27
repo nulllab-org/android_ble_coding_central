@@ -1,6 +1,6 @@
 # Android BLE Coding Central
 
-[![Android CI](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_ci.yml/badge.svg)](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_ci.yml)
+[![Android CI](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_ci.yml/badge.svg)](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_ci.yml) [![Android Release](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_release.yml/badge.svg)](https://github.com/nulllab-org/android_ble_coding_central/actions/workflows/android_release.yml)
 
 ## Overview
 
