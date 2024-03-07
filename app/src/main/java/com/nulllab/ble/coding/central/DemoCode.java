@@ -18,7 +18,8 @@ public class DemoCode {
         Codes.put("passive buzzer", "example_code/passive_buzzer/main.py");
         Codes.put("ir remote control receiver", "example_code/ir_remote_control_receiver/main.py");
         Codes.put("dc motor", "example_code/dc_motor/main.py");
-        Codes.put("servo 180", "example_code/servo180/main.py");
+        Codes.put("servo", "example_code/servo/main.py");
+        Codes.put("geek servo 270", "example_code/geek_servo_270/main.py");
         Codes.put("servo 360", "example_code/servo360/main.py");
         Codes.put("ws2812", "example_code/ws2812/main.py");
         Codes.put("ds18b20", "example_code/ds18b20/main.py");

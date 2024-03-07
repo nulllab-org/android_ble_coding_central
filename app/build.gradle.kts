@@ -10,8 +10,8 @@ android {
         applicationId = "com.nulllab.ble.coding.central"
         minSdk = 23
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 1000003
+        versionName = "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -74,7 +74,8 @@ tasks.register("checkExampleCodeAssets") {
             "example_code/passive_buzzer/main.py",
             "example_code/ir_remote_control_receiver/main.py",
             "example_code/dc_motor/main.py",
-            "example_code/servo180/main.py",
+            "example_code/geek_servo_270/main.py",
+            "example_code/servo/main.py",
             "example_code/servo360/main.py",
             "example_code/ws2812/main.py",
             "example_code/ds18b20/main.py",
