@@ -3,9 +3,9 @@ package com.nulllab.ble.coding.central;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
@@ -32,10 +32,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -43,22 +44,40 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private final List<String> mBleAddressList = new LinkedList<>();
     private final Set<String> mBleAddressSet = new HashSet<>();
+    private final LinkedHashMap<String, BluetoothDevice> mDiscoveredBleDevices = new LinkedHashMap<>();
     ArrayAdapter<String> mDialogAdapter = null;
     ArrayAdapter<String> mBleAddressSpinnerAdapter = null;
     Spinner mBleAddressSpinner = null;
     SwitchCompat mConnectSwitch = null;
     ScanCallback mScanCallback = new ScanCallback() {
         @Override
+        @SuppressLint("MissingPermission")
+        @RequiresPermission(android.Manifest.permission.BLUETOOTH_CONNECT)
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
-            Log.d(TAG, "onScanResult: " + result);
-            String address = result.getDevice().getAddress();
-            if (!mBleAddressSet.contains(address)) {
-                mBleAddressSet.add(address);
-                mBleAddressList.add(address);
-                mDialogAdapter.notifyDataSetChanged();
-                mBleAddressSpinnerAdapter.notifyDataSetChanged();
+//            Log.d(TAG, "onScanResult: " + result);
+            if (result != null) {
+                BluetoothDevice device = result.getDevice();
+                if (device != null) {
+                    final String device_name = device.getName();
+                    if (device_name != null && device_name.startsWith(("codiplay_"))) {
+                        if (!mDiscoveredBleDevices.containsKey(device.getAddress())) {
+                            mDiscoveredBleDevices.put(device.getAddress(), device);
+                            mBleAddressList.add("Device Name: " + device_name + "\nMac Address: " + device.getAddress());
+                            mDialogAdapter.notifyDataSetChanged();
+                            mBleAddressSpinnerAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
             }
+
+//            if (!mBleAddressSet.contains(address)) {
+//                    mBleAddressSet.add(address);
+//                    mBleAddressList.add(address);
+//                    mDialogAdapter.notifyDataSetChanged();
+//                    mBleAddressSpinnerAdapter.notifyDataSetChanged();
+//                }
+//            }
         }
 
         @Override
@@ -119,14 +138,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mDialogAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, mBleAddressList);
-        mBleAddressSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mBleAddressList);
-        mBleAddressSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mBleAddressSpinnerAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, mBleAddressList);
+//        mBleAddressSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mBleAddressSpinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         mConnectSwitch = findViewById(R.id.connect_switch);
         EditText codeEditText = findViewById(R.id.code_edit_text);
         mLogView = findViewById(R.id.log_text_view);
         mStateTextView = findViewById(R.id.state_text_view);
         mBleAddressSpinner = findViewById(R.id.ble_address_spinner);
-
         mConnectSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Log.d(TAG, "onCheckedChanged: " + isChecked);
             if (!enableBluetooth()) {
@@ -139,7 +158,13 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "please select a ble address", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                final String address = mBleAddressSpinner.getSelectedItem().toString();
+                if (mDiscoveredBleDevices.isEmpty()) {
+                    return;
+                }
+//                mDiscoveredBleDevices.keySet().toArray()[mBleAddressSpinner.getSelectedItemPosition()].toString();
+//                mDiscoveredBleDevices.entrySet().toArray()[mBleAddressSpinner.getSelectedItemPosition()].toString();
+//                final String address = mBleAddressSpinner.getSelectedItem().toString();
+                final String address = mDiscoveredBleDevices.keySet().toArray()[mBleAddressSpinner.getSelectedItemPosition()].toString();
                 BleCodingPeripheral.ResultCode ret = mBleCodingPeripheral.connect(address);
                 if (BleCodingPeripheral.ResultCode.OK != ret) {
                     Log.e(TAG, "failed to connect " + address + ": " + ret);
@@ -341,11 +366,12 @@ public class MainActivity extends AppCompatActivity {
 
         ScanSettings scanSettings = new ScanSettings.Builder().setMatchMode(ScanSettings.CALLBACK_TYPE_ALL_MATCHES).build();
 
-        ScanFilter scanFilter = new ScanFilter.Builder().setDeviceName("ble_coding_peripheral").build();
-        mBleAddressSet.clear();
+//        ScanFilter scanFilter = new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString("00000001-8c26-476f-89a7-a108033a69c7")).build();
+//        mBleAddressSet.clear();
+        mDiscoveredBleDevices.clear();
         mBleAddressList.clear();
         mDialogAdapter.notifyDataSetChanged();
-        bluetoothLeScanner.startScan(Collections.singletonList(scanFilter), scanSettings, mScanCallback);
+        bluetoothLeScanner.startScan(null, scanSettings, mScanCallback);
     }
 
     @Override
