@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothDevice device = result.getDevice();
                 if (device != null) {
                     final String device_name = device.getName();
-                    if (device_name != null && device_name.startsWith(("codiplay_"))) {
+                    if (device_name != null && device_name.startsWith(("codiplay"))) {
                         if (!mDiscoveredBleDevices.containsKey(device.getAddress())) {
                             mDiscoveredBleDevices.put(device.getAddress(), device);
                             mBleAddressList.add("Device Name: " + device_name + "\nMac Address: " + device.getAddress());
