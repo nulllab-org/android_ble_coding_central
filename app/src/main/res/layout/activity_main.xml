@@ -14,20 +14,20 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/ble_address_spinner"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_weight="1" />
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="device id: " />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/scan_button"
-            android:layout_width="wrap_content"
+        <AutoCompleteTextView
+            android:id="@+id/device_name"
+            android:layout_width="120sp"
             android:layout_height="wrap_content"
-            android:text="scan device"
-            android:singleLine="false"
-            android:textAllCaps="false" />
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:completionThreshold="0" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -65,7 +65,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="connect"/>
+            android:text="connect" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -78,6 +78,7 @@
         android:layout_height="50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,12 +86,13 @@
             android:text="demo code: "
             android:textColor="@color/black"
             android:textSize="20sp" />
+
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/demo_code"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_weight="1"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:layout_weight="1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
@@ -118,7 +120,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="send main.py"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatEditText
