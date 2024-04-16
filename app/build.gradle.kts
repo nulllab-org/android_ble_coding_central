@@ -10,8 +10,8 @@ android {
         applicationId = "com.nulllab.ble.coding.central"
         minSdk = 23
         targetSdk = 34
-        versionCode = 1000004
-        versionName = "1.0.4"
+        versionCode = 1
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
