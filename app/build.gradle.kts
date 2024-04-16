@@ -83,8 +83,10 @@ tasks.register("checkExampleCodeAssets") {
             "example_code/rgb_led/main.py",
             "example_code/tm1650_four_digit_led/main.py",
             "example_code/x16k33_matrix_led_5x5/main.py",
-            "example_code/ssd1306_i2c_128x64/main.py"
-        )
+            "example_code/ssd1306_i2c_128x64/main.py",
+            "example_code/qma6100p/measure_gesture/main.py",
+            "example_code/qma6100p/read_acceleration/main.py",
+            )
         val missingAssets = requiredAssets.filter { asset ->
             !File("app/src/main/assets/$asset").exists()
         }
