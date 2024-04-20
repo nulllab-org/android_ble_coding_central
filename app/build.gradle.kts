@@ -11,7 +11,7 @@ android {
         minSdk = 23
         targetSdk = 34
         versionCode = 1
-        versionName = "1.1.1"
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -86,6 +86,8 @@ tasks.register("checkExampleCodeAssets") {
             "example_code/ssd1306_i2c_128x64/main.py",
             "example_code/qma6100p/measure_gesture/main.py",
             "example_code/qma6100p/read_acceleration/main.py",
+            "example_code/traffic_lights/main.py",
+            "example_code/adc_five_button/main.py",
             )
         val missingAssets = requiredAssets.filter { asset ->
             !File("app/src/main/assets/$asset").exists()

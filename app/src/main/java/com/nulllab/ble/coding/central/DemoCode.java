@@ -30,5 +30,7 @@ public class DemoCode {
         Codes.put("ssd1306 i2c 128x64", "example_code/ssd1306_i2c_128x64/main.py");
         Codes.put("qma6100p measure gesture", "example_code/qma6100p/measure_gesture/main.py");
         Codes.put("qma6100p read acceleration", "example_code/qma6100p/read_acceleration/main.py");
+        Codes.put("traffic lights", "example_code/traffic_lights/main.py");
+        Codes.put("adc five button", "example_code/adc_five_button/main.py");
     }
 }
