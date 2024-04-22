@@ -31,6 +31,6 @@ public class DemoCode {
         Codes.put("qma6100p measure gesture", "example_code/qma6100p/measure_gesture/main.py");
         Codes.put("qma6100p read acceleration", "example_code/qma6100p/read_acceleration/main.py");
         Codes.put("traffic lights", "example_code/traffic_lights/main.py");
-        Codes.put("adc five button", "example_code/adc_five_button/main.py");
+        Codes.put("adc keyboard", "example_code/adc_keyboard/main.py");
     }
 }
