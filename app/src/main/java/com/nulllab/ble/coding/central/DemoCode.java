@@ -28,7 +28,7 @@ public class DemoCode {
         Codes.put("tm1650 four digit led", "example_code/tm1650_four_digit_led/main.py");
         Codes.put("x16k33 matrix led 5x5", "example_code/x16k33_matrix_led_5x5/main.py");
         Codes.put("ssd1306 i2c 128x64", "example_code/ssd1306_i2c_128x64/main.py");
-        Codes.put("qma6100p measure gesture", "example_code/qma6100p/measure_gesture/main.py");
+        Codes.put("qma6100p measure posture", "example_code/qma6100p/measure_posture/main.py");
         Codes.put("qma6100p read acceleration", "example_code/qma6100p/read_acceleration/main.py");
         Codes.put("traffic lights", "example_code/traffic_lights/main.py");
         Codes.put("adc keyboard", "example_code/adc_keyboard/main.py");
