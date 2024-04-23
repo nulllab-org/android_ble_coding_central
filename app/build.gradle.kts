@@ -11,7 +11,7 @@ android {
         minSdk = 23
         targetSdk = 34
         versionCode = 1
-        versionName = "1.1.3"
+        versionName = "1.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -84,7 +84,7 @@ tasks.register("checkExampleCodeAssets") {
             "example_code/tm1650_four_digit_led/main.py",
             "example_code/x16k33_matrix_led_5x5/main.py",
             "example_code/ssd1306_i2c_128x64/main.py",
-            "example_code/qma6100p/measure_gesture/main.py",
+            "example_code/qma6100p/measure_posture/main.py",
             "example_code/qma6100p/read_acceleration/main.py",
             "example_code/traffic_lights/main.py",
             "example_code/adc_keyboard/main.py",
